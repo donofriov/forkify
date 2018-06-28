@@ -6,6 +6,7 @@ export default class Search {
     }
 
     async getResults() {
+        // proxy needed to bypass cross origin error (this isn't necessary on a live server)
         const proxy = 'https://cors-anywhere.herokuapp.com/'
         const key = '26a5beb1fbce94c14c503ceaa54a3461';
 
