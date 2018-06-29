@@ -1,4 +1,5 @@
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
@@ -10,10 +11,13 @@ import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
 
+// SEARCH CONTROLLER
 const controlSearch = async () => {
     // 1) Get query from view
-    const query = searchView.getInput();
     // console.log(query);
+    // TESTING ONLY
+    // const query = 'pasta';
+    const query = searchView.getInput();
 
     if (query) {
         // 2) New search object and add to state
@@ -24,12 +28,17 @@ const controlSearch = async () => {
         searchView.clearResults();
         renderLoader(elements.searchResults);
 
-        // 4) Search for recipes
-        await state.search.getResults();
+        try{
+            // 4) Search for recipes
+            await state.search.getResults();
 
-        // 5) Render results on UI
-        clearLoader();
-        searchView.renderResults(state.search.result);
+            // 5) Render results on UI
+            clearLoader();
+            searchView.renderResults(state.search.result);
+        } catch (error) {
+            alert("Search failed!");
+            clearLoader();
+        }
     }
 }
 
@@ -38,6 +47,13 @@ elements.searchForm.addEventListener('submit', e => {
     e.preventDefault();
     controlSearch();
 });
+
+// FOR TESTING ONLY
+// window.addEventListener('load', e => {
+//     // stops the page from reloading
+//     e.preventDefault();
+//     controlSearch();
+// });
 
 // use event delegation because pagination buttons are available on load
 elements.searchResPages.addEventListener('click', e => {
@@ -52,4 +68,45 @@ elements.searchResPages.addEventListener('click', e => {
         // console.log(goToPage);
     }
     // console.log(btn);
-})
+});
+
+// RECIPE CONTROLLER
+// const r = new Recipe(46956);
+// r.getRecipe();
+// console.log(r);
+// end testing
+const controlRecipe = async () => {
+    // Get ID from url
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
+
+
+    if (id) {
+        // prepare ui for changes
+
+
+        // create new recipe object
+        state.recipe = new Recipe(id);
+
+        try {
+            // get recipe data
+            await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
+
+            // calculate servings and time
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+
+            // render recipe
+            console.log(state.recipe);
+        } catch (error) {
+            alert('Error processing recipe!');
+            console.log(error);
+        }
+    }
+}
+
+// window.addEventListener('hashchange', controlRecipe);
+// window.addEventListener('load', controlRecipe);
+// add same event listener to multiple events
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
