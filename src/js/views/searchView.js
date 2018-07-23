@@ -17,10 +17,10 @@ export const highlightSelected = id => {
         el.classList.remove('results__link--active');
     })
 
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 }
 
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
     if (title.length > limit) {
         // How reduce works with accumulator and current
@@ -58,7 +58,7 @@ const renderRecipe = recipe => {
         </li>
     `;
 
-    elements.searchResList.insertAdjacentHTML('beforeEnd', markup);
+    elements.searchResList.insertAdjacentHTML('beforeend', markup);
 };
 
 // type: 'prev' or 'next'
